@@ -26,6 +26,12 @@ var (
 )
 
 func webhookHandler(c *gin.Context) {
+	requestApiKey := c.Query("api_key")
+	if requestApiKey != apiKey {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
 	id := c.Param("id")
 	if id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing ID"})
@@ -35,7 +41,6 @@ func webhookHandler(c *gin.Context) {
 	store.Lock()
 	defer store.Unlock()
 
-	// Clear data if last update was more than 10 minutes ago
 	if lastUpdate, exists := store.lastUpdatedAt[id]; exists && time.Since(lastUpdate) > 10*time.Minute {
 		store.data[id] = nil
 	}
@@ -67,6 +72,10 @@ func getDataHandler(c *gin.Context) {
 
 	store.Lock()
 	defer store.Unlock()
+
+	if lastUpdate, exists := store.lastUpdatedAt[id]; exists && time.Since(lastUpdate) > 10*time.Minute {
+		store.data[id] = nil
+	}
 
 	data, exists := store.data[id]
 	if !exists {

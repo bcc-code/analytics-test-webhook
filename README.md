@@ -1,13 +1,13 @@
 
-# Webhook Receiver and Data Retriever Service
+# Dumb webhook storage
 
 This is a simple Go service designed to receive arbitrary JSON data via a webhook and store it in memory.
 It's retrievable via an API_KEY protected endpoint.
 
 ## Deployment
 
-```
-gcloud run deploy # And just follow the steps
+```sh
+gcloud run deploy # And just follow the steps. Allow anonymous access when asked.
 ```
 
 ## Features
